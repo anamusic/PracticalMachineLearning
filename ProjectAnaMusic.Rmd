@@ -7,7 +7,7 @@ Author: Ana Music
 Data 
 ---
 
-I took my data from the links below. Training and test data for the project are available here: 
+We took our data from the links below. Training and test data for the project are available here: 
 
 - https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv 
 
@@ -21,12 +21,12 @@ The goal of the project
 
 The goal of this project is to predict variable *classe*, where we measure how well did they do the exercises, and not only how much of a particular activity they did.
 
-I used the training data to build and train the model, with which I predict variable *classe* in the test data. 
+We used the training data to build and train the model, with which we predict variable *classe* in the test data. 
 
 Modelling
 ---
 
-In code I used some packages:
+In code we used some packages:
 ```
 library(caret);
 library(gbm);
@@ -34,9 +34,9 @@ library(survival);
 library(splines);
 library(plyr)
 ```
-I set seed to 1 to always get the same result. I also set working directory to a directory where I saved all files.
+We set seed to 1 to always get the same result. We also set working directory to a directory where we saved all files.
 
-From **pml-training.csv** file I loaded the data and saved them to a varible *training*.
+From **pml-training.csv** file we loaded the data and saved them to a varible *training*.
 ```
 set.seed(1)
 
@@ -45,19 +45,19 @@ setwd(dir)
 training = read.csv("pml-training.csv")
 ```
 
-To get some information of the *training* variable I have built a density function for each of the columns. I also wanted to build a *featurePlot*, but there are 160 columns in the *training* variable, what is too much to show on a chart. In our case (*classe* is a class type variable) we get a similar information from density function plot then from *featurePlot* (qq plots of each variable to the *classe* variable). 
+To get some information of the *training* variable we have built a density function for each of the columns. We also wanted to build a *featurePlot*, but there are 160 columns in the *training* variable, what is too much to show on a chart. In our case (*classe* is a class type variable) we get a similar information from density function plot then from *featurePlot* (qq plots of each variable to the *classe* variable). 
 
 Below are few examples of density functions:
 
-**slika**
+![alt text](Densities.png)
 
-In the data there are some columns with *NA* varibles. I decided not to use them, because values in those columns do not cover the whole space. They only cover aproximately 2% of it, therefore I deleted them from the *training* variable.
+In the data there are some columns with *NA* varibles. We decided not to use them, because values in those columns do not cover the whole space. They only cover aproximately 2% of it, therefore we deleted them from the *training* variable.
 
 ```
 training <- training[,colSums(is.na(training)) == 0] 
 ```
 
-I divide the training variable into two parts, the train set and the test set. I chose ratio p=0.75.
+We divide the training variable into two parts, the train set and the test set. We chose ratio p=0.75.
 
 ```
 inTrain = createDataPartition(y=training$classe,p=0.75,list=FALSE)
@@ -65,7 +65,7 @@ train = training[inTrain,]
 test = training[-inTrain,]
 ```
 
-To set parameters for a model we use *trainControl* function. I will show later how different parameters (*number* and *repeats*) affect the quality of predicted results. 
+To set parameters for a model we use *trainControl* function. We will show later how different parameters (*number* and *repeats*) affect the quality of predicted results. 
 
 ```
 fitControl <- trainControl(method  = "repeatedcv",
@@ -73,7 +73,7 @@ fitControl <- trainControl(method  = "repeatedcv",
                            repeats = M)
 ```
 
-We use *train* function to build the model. I have decided to use **gbm** method, because it is appropriate for classification problems. I will also show how preprocessing (*pca*) affect the quality of predicted results.
+We use *train* function to build the model. We have decided to use **gbm** method, because it is appropriate for classification problems. We will also show how preprocessing (*pca*) affect the quality of predicted results.
 
 ```
 modFit <- train(classe ~ variables,
@@ -84,13 +84,13 @@ modFit <- train(classe ~ variables,
                 verbose    = FALSE)
 ```
 
-Based on dansity functions I have decided for some input variables for the model. I have chosen the following (but will add/remove some of them and present the results later):
+Based on dansity functions we have decided for some input variables for the model. We have chosen the following (but will add/remove some of them and present the results later):
 
 ```
 variables = yaw_belt + total_accel_belt + accel_belt_z + roll_arm + yaw_arm + total_accel_arm + gyros_arm_x + gyros_arm_y + gyros_arm_z + accel_arm_z + pitch_forearm + roll_dumbbell
 ```
 
-We check importance of model variables with the following comand:
+We check importance of model variables with the following command:
 
 ```
 varImp(modFit, scale = FALSE)
@@ -101,7 +101,7 @@ and we predict outturns with:
 outturn = predict(modFit,test)
 ```
 
-To check quality of the model we calculate the ration of correctly predicted values of the *classe* variable to the number of all with command:
+To check quality of the model we calculate the ratio of correctly predicted values of the *classe* variable to the number of all with command:
 
 ```
 length(which(outturn == test$classe))/nrow(test)
@@ -239,21 +239,12 @@ total_accel_arm    82.55
 Summary
 ---
 
-Izbrala sem model X, ker ima najboljse rezultate. Opazili smo to in to.
+We choose model 4, because we get the best results. We made our decision based on a ratio of correctly predicted values of the *classe* variable. The ratio of model 4 is 88.01%.
+
+Remark: We did not decide for the default model settings, because of very long run time.
 
 
-Submission results
----
-
-Please find my submission results, based on model X, below:
-
-```
-
-```
-
-
-Appendix / note / remark
----
+**Hardware specification**:
 
 CPU: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
 
@@ -262,11 +253,6 @@ RAM: 8 GB
 OS: Windows 7 Professional 64bit
 
 R version: 3.1.1, 32 bit
-
-
-
-
-
 
 
 
